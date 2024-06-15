@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "evol-instruct"
+version = "0.1.0"
+description = "An implementation of the evol-instruct dataset generation process in the WizardLM paper"
+authors = ["Sachith Gunasekara <sachith@surge.global>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+datasets = "^2.20.0"
+bitsandbytes = "0.39.1"
+huggingface-hub = "^0.23.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
