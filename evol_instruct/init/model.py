@@ -1,12 +1,12 @@
 import os
 import configparser
+from pyprojroot import here
 from huggingface_hub import hf_hub_download
 
 from evol_instruct.init.logger import logger
-from evol_instruct.helpers.ei_os import get_path
 
 config = configparser.ConfigParser()
-config.read(get_path('config/config.ini'))
+config.read(here('evol_instruct/config/config.ini'))
 
 # Model used for generating the dataset
 generator_model_path = hf_hub_download(
@@ -14,14 +14,24 @@ generator_model_path = hf_hub_download(
     config['model']['GeneratorModelGGMLFileName']
 )
 
-logger.info(f"Generator model {config['model']['GeneratorModel']} downloaded and is available at {generator_model_path}")
+logger.info('Generator model %s downloaded and is available at %s', config['model']['GeneratorModel'], generator_model_path)
 
 # Model used for evaluating evolved instructions
-evaluator_model_ggml_path = hf_hub_download(
-    config['model']['EvaluatorModel'],
-    config['model']['EvaluatorModelGGMLFileName']
-)
+if config.getboolean('model', 'isEvaluatorModelGGML'):
+    logger.info('Downloading GGML evaluator model file %s from %s', config['model']['EvaluatorModelGGMLFileName'], config['model']['EvaluatorModel'])
 
-logger.info(f"Evaluator model {config['model']['EvaluatorModel']} downloaded and is available at {evaluator_model_ggml_path}")
+    evaluator_model_ggml_path = hf_hub_download(
+        config['model']['EvaluatorModel'],
+        config['model']['EvaluatorModelGGMLFileName']
+    )
 
-evaluator_model_gguf_path = os.path.join(os.path.dirname(evaluator_model_ggml_path), config['model']['EvaluatorModelGGUFFileName'])
+    evaluator_model_gguf_path = os.path.join(os.path.dirname(evaluator_model_ggml_path), config['model']['EvaluatorModelGGUFFileName'])
+else:
+    logger.info('Downloading GGUF evaluator model file %s from %s', config['model']['EvaluatorModelGGUFFileName'], config['model']['EvaluatorModel'])
+    
+    evaluator_model_gguf_path = hf_hub_download(
+        config['model']['EvaluatorModel'],
+        config['model']['EvaluatorModelGGUFFileName']
+    )
+
+logger.info('Evaluator model %s downloaded and is available at %s', config['model']['EvaluatorModel'], os.path.dirname(evaluator_model_ggml_path))

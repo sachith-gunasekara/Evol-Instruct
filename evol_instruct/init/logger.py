@@ -1,10 +1,12 @@
 import logging
 import configparser
-
-from evol_instruct.helpers.ei_os import get_path
+from pyprojroot import here
 
 config = configparser.ConfigParser()
-config.read(get_path('config/config.ini'))
+config.read(here('evol_instruct/config/config.ini'))
+
+print(here('config/config.ini'))
+
 
 logger = logging.getLogger(config['logger']['name'])
 
