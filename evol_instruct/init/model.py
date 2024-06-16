@@ -14,7 +14,7 @@ generator_model_path = hf_hub_download(
     config['model']['GeneratorModelGGMLFileName']
 )
 
-logger.info(f'Generator model {config['model']['GeneratorModel']} downloaded and is available at {generator_model_path}')
+logger.info(f"Generator model {config['model']['GeneratorModel']} downloaded and is available at {generator_model_path}")
 
 # Model used for evaluating evolved instructions
 evaluator_model_ggml_path = hf_hub_download(
@@ -22,6 +22,6 @@ evaluator_model_ggml_path = hf_hub_download(
     config['model']['EvaluatorModelGGMLFileName']
 )
 
-logger.info(f'Evaluator model {config["model"]["EvaluatorModel"]} downloaded and is available at {evaluator_model_ggml_path}')
+logger.info(f"Evaluator model {config['model']['EvaluatorModel']} downloaded and is available at {evaluator_model_ggml_path}")
 
 evaluator_model_gguf_path = os.path.join(os.path.dirname(evaluator_model_ggml_path), config['model']['EvaluatorModelGGUFFileName'])
