@@ -22,6 +22,7 @@ image = (
     timeout=86400, # Allow one day timout period
     image=image,
     mounts=[
+        modal.Mount.from_local_file('setup.py', '/root/setup.py'),
         modal.Mount.from_local_python_packages('evol_instruct'),
     ],
     volumes={
@@ -32,16 +33,14 @@ image = (
 def run_on_modal():
     from pyprojroot import here
     import subprocess
+    import os
 
-    subprocess.run(['ls', '-la'])
-
-    exit()
+    os.environ['HF_HUB_CACHE'] = '/vol/.cache'
 
     from evol_instruct.init.logger import logger
     from evol_instruct.init.datasets import datasets
     from evol_instruct.init.model import evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script
-
 
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
@@ -58,14 +57,22 @@ def run_on_modal():
     pem_process = run_bash_script(prepare_evaluator_model_script, args=['-i', evaluator_model_ggml_path, '-o', evaluator_model_gguf_path], cwd=here('evol_instruct/workers'))
 
     o, e = pgm_process.communicate()
-    print('Output++++++++++++++++++++++++++++++++' + o)
-    print('Error++++++++++++++++++++++++++++++++' + e)
+    print('Output++++++++++++++++++++++++++++++++')
+    print(o)
+    print('Error++++++++++++++++++++++++++++++++')
+    print(e)
     print('Generator model is ready!')
 
+    subprocess.run(['ls', '-la'], cwd=here('evol_instruct/workers/ggllm.cpp'), check=True)
+
     o, e = pem_process.communicate()
-    print('Output++++++++++++++++++++++++++++++++' + o)
-    print('Error++++++++++++++++++++++++++++++++' + e)
+    print('Output++++++++++++++++++++++++++++++++')
+    print(o)
+    print('Error++++++++++++++++++++++++++++++++')
+    print(e)
     print('Evaluator model is ready!')
+
+    subprocess.run(['ls', '-la'], cwd=here('evol_instruct/workers/llama.cpp'), check=True)
 
 
 @app.local_entrypoint()
