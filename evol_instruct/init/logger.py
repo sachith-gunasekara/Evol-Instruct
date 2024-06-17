@@ -5,9 +5,6 @@ from pyprojroot import here
 config = configparser.ConfigParser()
 config.read(here('evol_instruct/config/config.ini'))
 
-print(here('config/config.ini'))
-
-
 logger = logging.getLogger(config['logger']['name'])
 
 # Create handlers

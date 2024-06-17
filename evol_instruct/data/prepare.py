@@ -14,6 +14,7 @@ nltk.download('stopwords')
 
 def prepare_datasets():
     config = configparser.ConfigParser()
+    config.read(here('evol_instruct/config/config.ini'))
 
     logger.info('Loading tokenizer: %s', config['tokenizer']['GeneratorTokenizer'])
     tokenizer = AutoTokenizer.from_pretrained(config['tokenizer']['GeneratorTokenizer'])
@@ -28,7 +29,8 @@ def prepare_datasets():
         split="train",
     ).map(
         preprocess_dataset,
-        remove_columns=['context', 'response']
+        remove_columns=['context', 'response'],
+        num_proc=2
     )
 
     return data
