@@ -7,7 +7,7 @@ from evol_instruct.init.logger import logger
 
 def generate_from_generator_model(prompt, temp=0.8, timeout=600):
     prompt = prompt.replace("\"", "\\\"")
-    cmd = f"{here('evol_instruct/workers/ggllm.cpp/falcon_main')} -t 5 -ngl 20 -b 512 --temp {temp} -m {generator_model_path} -p \"{prompt}\""
+    cmd = f"{here('evol_instruct/workers/ggllm.cpp/falcon_main')} -t 2 -ngl 20 -b 512 --temp {temp} -m {generator_model_path} -p \"{prompt}\""
 
     def run_cmd(cmd, result):
         try:
@@ -44,7 +44,7 @@ def generate_from_generator_model(prompt, temp=0.8, timeout=600):
 def generate_from_evaluator_model(prompt):
     prompt = prompt.replace("\"", "\\\"")
     prompt = f"<s>[INST]{prompt}[/INST]"
-    cmd = f"{here('evol_instruct/workers/llama.cpp/main')} -c 2048 -t 10 -ngl 20 -m {evaluator_model_gguf_path} -p \"{prompt}\""
+    cmd = f"{here('evol_instruct/workers/llama.cpp/main')} -c 2048 -t 2 -ngl 20 -m {evaluator_model_gguf_path} -p \"{prompt}\""
 
     try:
         output = subprocess.check_output(cmd, shell=True)

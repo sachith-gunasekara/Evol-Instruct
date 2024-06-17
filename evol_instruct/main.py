@@ -1,6 +1,5 @@
 import modal
 from modal import Image
-from pyprojroot import here
 
 # Initialize modal app
 app = modal.App()
@@ -46,6 +45,8 @@ def run_on_modal():
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
 
+    subprocess.run(['ls', '-la'], cwd='/root/evol_instruct/scripts')
+
     prepare_generator_model_script = here('evol_instruct/scripts/prepare_generator_model.sh')
     subprocess.run(['chmod', '+x', prepare_generator_model_script], check=True)
     pgm_process = run_bash_script(prepare_generator_model_script, cwd=here('evol_instruct/workers'))
@@ -70,5 +71,10 @@ def run_on_modal():
 
 
 @app.local_entrypoint()
-def main():
-    run_on_modal.remote()
+def main(
+    run_on_remote: bool = True
+):
+    if run_on_remote:
+        run_on_modal.remote()
+    else:
+        run_on_modal.local()
