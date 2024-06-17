@@ -2,7 +2,6 @@ import configparser
 import json
 from pyprojroot import here
 
-
 from evol_instruct.init.logger import logger
 
 config = configparser.ConfigParser()

@@ -16,6 +16,9 @@ generator_model_path = hf_hub_download(
 
 logger.info('Generator model %s downloaded and is available at %s', config['model']['GeneratorModel'], generator_model_path)
 
+# This is imported in the main file
+evaluator_model_ggml_path = ""
+
 # Model used for evaluating evolved instructions
 if config.getboolean('model', 'isEvaluatorModelGGML'):
     logger.info('Downloading GGML evaluator model file %s from %s', config['model']['EvaluatorModelGGMLFileName'], config['model']['EvaluatorModel'])
@@ -34,4 +37,4 @@ else:
         config['model']['EvaluatorModelGGUFFileName']
     )
 
-logger.info('Evaluator model %s downloaded and is available at %s', config['model']['EvaluatorModel'], os.path.dirname(evaluator_model_ggml_path))
+logger.info('Evaluator model %s downloaded and is available at %s', config['model']['EvaluatorModel'], os.path.dirname(evaluator_model_gguf_path))
