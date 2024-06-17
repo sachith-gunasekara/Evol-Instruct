@@ -12,6 +12,7 @@ huggingface-hub = "^0.23.4"
 pyprojroot = "^0.3.0"
 accelerate = "^0.31.0"
 transformers = {git = "https://github.com/huggingface/transformers"}
+nltk = "^3.8.1"
 
 
 [build-system]

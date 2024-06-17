@@ -38,8 +38,8 @@ def run_on_modal():
     os.environ['HF_HUB_CACHE'] = '/vol/.cache'
 
     from evol_instruct.init.logger import logger
-    from evol_instruct.init.datasets import datasets
-    from evol_instruct.init.model import evaluator_model_ggml_path, evaluator_model_gguf_path
+    from evol_instruct.data.prepare import prepare_datasets
+    from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script
 
     # Prepare the generator model
@@ -56,23 +56,12 @@ def run_on_modal():
     subprocess.run(['chmod', '+x', prepare_evaluator_model_script], check=True)
     pem_process = run_bash_script(prepare_evaluator_model_script, args=['-i', evaluator_model_ggml_path, '-o', evaluator_model_gguf_path], cwd=here('evol_instruct/workers'))
 
-    o, e = pgm_process.communicate()
-    print('Output++++++++++++++++++++++++++++++++')
-    print(o)
-    print('Error++++++++++++++++++++++++++++++++')
-    print(e)
-    print('Generator model is ready!')
 
-    subprocess.run(['ls', '-la'], cwd=here('evol_instruct/workers/ggllm.cpp'), check=True)
+    data = prepare_datasets()
 
-    o, e = pem_process.communicate()
-    print('Output++++++++++++++++++++++++++++++++')
-    print(o)
-    print('Error++++++++++++++++++++++++++++++++')
-    print(e)
-    print('Evaluator model is ready!')
+    # o, e = pgm_process.communicate()
 
-    subprocess.run(['ls', '-la'], cwd=here('evol_instruct/workers/llama.cpp'), check=True)
+    # o, e = pem_process.communicate()
 
 
 @app.local_entrypoint()
