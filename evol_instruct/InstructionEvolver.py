@@ -1,3 +1,6 @@
+from evol_instruct.init.logger import logger
+import random
+
 class InstructionEvolution:
     def __init__(self, initial_instructions, config=None):
         self.pool = initial_instructions

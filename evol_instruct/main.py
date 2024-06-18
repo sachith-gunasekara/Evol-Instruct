@@ -38,18 +38,16 @@ def run_on_modal():
 
     from evol_instruct.init.logger import logger
     from evol_instruct.data.prepare import prepare_datasets
-    from evol_instruct.init.model import evaluator_model_ggml_path, evaluator_model_gguf_path
+    from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script
     from evol_instruct.helpers.generate import generate_from_evaluator_model, generate_from_generator_model
 
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
 
-    subprocess.run(['ls', '-la'], cwd='/root/evol_instruct/scripts')
-
     prepare_generator_model_script = here('evol_instruct/scripts/prepare_generator_model.sh')
     subprocess.run(['chmod', '+x', prepare_generator_model_script], check=True)
-    pgm_process = run_bash_script(prepare_generator_model_script, cwd=here('evol_instruct/workers'))
+    pgm_process = run_bash_script(prepare_generator_model_script, args=['-O', os.path.dirname(generator_model_path)], cwd=here('evol_instruct/workers'))
 
     # Prepare the evaluator model
     logger.info('Dispatching prepare_evaluator_model.sh to run in the background')
@@ -61,13 +59,12 @@ def run_on_modal():
 
     data = prepare_datasets()
 
-    o, e = pgm_process.communicate()
-    print(generate_from_generator_model('''<human>: What is the capital of France? Explain this to me with a history of how this came to be
-<bot>: The capital of France'''))
-
-    # o, e = pgm_process.communicate()
-
-    # o, e = pem_process.communicate()
+    pgm_process.communicate()
+    print(generate_from_generator_model('''<human>: What is the capital of France? Explain this to me with a history of how this came to be. Write in a pirate talking style
+<bot>:'''))
+    
+    pem_process.communicate()
+    print(generate_from_evaluator_model("What is the capital of France? Explain this to me with a history of how this came to be. Write in a pirate talking style"))
 
 
 @app.local_entrypoint()
