@@ -33,6 +33,7 @@ def run_on_modal():
     from pyprojroot import here
     import subprocess
     import os
+    import configparser
 
     os.environ['HF_HUB_CACHE'] = '/vol/.cache'
 
@@ -40,7 +41,13 @@ def run_on_modal():
     from evol_instruct.data.prepare import prepare_datasets
     from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script
-    from evol_instruct.helpers.generate import generate_from_evaluator_model, generate_from_generator_model
+    from evol_instruct.helpers.evolver import evolve_category
+
+
+
+    # Load the dataset config file
+    dataset_config = configparser.ConfigParser()
+    dataset_config.read(here('evol_instruct/config/dataset.ini'))
 
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
@@ -59,13 +66,24 @@ def run_on_modal():
 
     data = prepare_datasets()
 
-    pgm_process.communicate()
-    print(generate_from_generator_model('''<human>: What is the capital of France? Explain this to me with a history of how this came to be. Write in a pirate talking style
-<bot>:'''))
-    
-    pem_process.communicate()
-    print(generate_from_evaluator_model("What is the capital of France? Explain this to me with a history of how this came to be. Write in a pirate talking style"))
+    logger.info('Waiting for dispatched scripts to finish compiling')
+    pgm_process.wait()
+    pem_process.wait()
+    logger.info('Dispatched scripts finished compiling')
 
+    logger.info('Starting evolution process')
+    for category in dataset_config.sections():
+
+        logger.info('Starting evolution process for category: %s', category)
+        evolve_category(
+            dataset_config[category]['epochs'],
+            category,
+            dataset_config[category]['start'],
+            dataset_config[category]['end'],
+            data
+        )
+
+    
 
 @app.local_entrypoint()
 def main(

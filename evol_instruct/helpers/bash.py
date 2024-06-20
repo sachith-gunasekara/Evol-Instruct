@@ -1,4 +1,5 @@
 import subprocess
+import platform
 
 from evol_instruct.init.logger import logger
 
@@ -44,3 +45,6 @@ def run_cmd_and_get_output(cmd: str, result: dict):
         result['error'] = str(e)
     
     return result
+
+def clear_terminal():
+    subprocess.Popen("cls" if platform.system() == "Windows" else "clear", shell=True)

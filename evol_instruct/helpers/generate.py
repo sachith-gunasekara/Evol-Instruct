@@ -3,7 +3,6 @@ import multiprocessing
 from pyprojroot import here
 
 from evol_instruct.init.model import generator_model_path, evaluator_model_gguf_path
-from evol_instruct.init.logger import logger
 from evol_instruct.helpers.bash import run_cmd_and_get_output
 
 
