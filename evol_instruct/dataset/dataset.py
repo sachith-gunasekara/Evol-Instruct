@@ -61,14 +61,22 @@ class Dataset:
     def __str__(self) -> str:
         return repr(self)
     
-    def add_data(self, instruction: str, response: str, category: str, evolution_strategy: str, in_depth_evolving_operation: str, epoch: int):
+    def add_data(
+            self, 
+            instruction: str, 
+            response: str, 
+            category: str, 
+            evolution_strategy: str, 
+            in_depth_evolving_operation: str, 
+            epoch: int
+        ):
         data_instance = DataInstance(
-            instruction=instruction,
-            response=response,
-            category=category,
-            evolution_strategy=evolution_strategy,
-            in_depth_evolving_operation=in_depth_evolving_operation,
-            epoch=epoch
+            instruction,
+            response,
+            category,
+            evolution_strategy,
+            in_depth_evolving_operation,
+            epoch
         )
         self.data.append(data_instance)
 
@@ -76,6 +84,9 @@ class Dataset:
     
     def join_data(self, data_instances: list[DataInstance]):
         self.data.extend(data_instances)
+    
+    def join_dataset(self, dataset: 'Dataset'):
+        self.data.extend(dataset.data)
 
     def _to_json(self):
         keys = ("instruction", "response", "category", "evolution_strategy", "in_depth_evolving_operation", "epoch")
@@ -86,18 +97,36 @@ class Dataset:
             self.save(self.filename)
             self.last_save_time = time()
 
-    def save(self, filename):
-        logger.info("Saving dataset")
-
+    def save(self):
         config = configparser.ConfigParser()
         config.read(here('evol_instruct/config/config.ini'))
 
-        if not os.path.exists(os.path.dirname(os.path.join(os.getcwd(), filename))):
-            os.makedirs(os.path.dirname(filename))
-
-        generated_data_save_path = os.path.join(config['data']['ModalVolumePath'], filename) \
+        filepath = os.path.join(config['data']['ModalVolumePath'], self.filename) \
             if config.getboolean('modal', 'RunOnModal') \
-            else os.path.join(config['data']['Location'], filename)
+            else os.path.join(config['data']['Location'], self.filename)
+    
+        if not os.path.exists(os.path.dirname(filepath)):
+            os.makedirs(os.path.dirname(filepath))
         
-        with open(generated_data_save_path, "w") as f:
+        logger.info("Saving dataset to %s", filepath)
+        
+        with open(filepath, "w") as f:
             json.dump(self._to_json(), f)
+    
+    @staticmethod
+    def generate_filename(
+        epoch, 
+        category, 
+        file_name_manual_epoch, 
+        file_name_append_tag, 
+        strategy, 
+        in_depth_evolution_operation=None
+    ) -> str:
+        
+        config = configparser.ConfigParser()
+        config.read(here('evol_instruct/config/config.ini'))
+        return os.path.join(
+            "evolved",
+            category,
+            f"{epoch if not file_name_manual_epoch else file_name_manual_epoch}_{strategy}{f'_{in_depth_evolution_operation}' if in_depth_evolution_operation else ''}{f'_{file_name_append_tag}' if file_name_append_tag else ''}.json"
+        )

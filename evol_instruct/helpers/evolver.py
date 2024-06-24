@@ -54,3 +54,16 @@ def evolve_category(
         file_name_manual_epoch,
         file_name_append_tag
     )
+
+def evolve_dataset(dataset_config: configparser.ConfigParser, data: list[dict]):
+    for category in dataset_config.sections():
+
+        logger.info('Starting evolution process for category: %s', category)
+        
+        evolve_category(
+            dataset_config[category].getint('epochs', 1),
+            category,
+            dataset_config[category].getint('start', 0),
+            dataset_config[category].getint('end', 0),
+            data
+        )

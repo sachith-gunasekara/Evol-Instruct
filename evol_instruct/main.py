@@ -48,8 +48,8 @@ def run_on_modal():
     from evol_instruct.init.logger import logger
     from evol_instruct.data.prepare_seed import prepare_seed_datasets
     from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
-    from evol_instruct.helpers.bash import run_bash_script
-    from evol_instruct.helpers.evolver import evolve_category
+    from evol_instruct.helpers.bash import run_bash_script_in_background
+    from evol_instruct.helpers.evolver import evolve_dataset
 
 
     config = configparser.ConfigParser()
@@ -62,16 +62,16 @@ def run_on_modal():
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
 
-    prepare_generator_model_script = here('evol_instruct/scripts/prepare_generator_model.sh')
+    prepare_generator_model_script = here(os.path.join('evol_instruct', 'scripts', 'prepare_generator_model.sh'))
     subprocess.run(['chmod', '+x', prepare_generator_model_script], check=True)
-    pgm_process = run_bash_script(prepare_generator_model_script, args=['-O', os.path.dirname(generator_model_path)], cwd=here('evol_instruct/workers'))
+    pgm_process = run_bash_script_in_background(prepare_generator_model_script, args=['-O', os.path.dirname(generator_model_path)], cwd=here('evol_instruct/workers'))
 
     # Prepare the evaluator model
     logger.info('Dispatching prepare_evaluator_model.sh to run in the background')
 
     prepare_evaluator_model_script = here('evol_instruct/scripts/prepare_evaluator_model.sh')
     subprocess.run(['chmod', '+x', prepare_evaluator_model_script], check=True)
-    pem_process = run_bash_script(prepare_evaluator_model_script, args=['-i', evaluator_model_ggml_path, '-o', evaluator_model_gguf_path], cwd=here('evol_instruct/workers'))
+    pem_process = run_bash_script_in_background(prepare_evaluator_model_script, args=['-i', evaluator_model_ggml_path, '-o', evaluator_model_gguf_path], cwd=here('evol_instruct/workers'))
 
 
     data = prepare_seed_datasets()
@@ -83,17 +83,8 @@ def run_on_modal():
     logger.info('Evaluator model script finished compiling')
 
     logger.info('Starting evolution process')
-    for category in dataset_config.sections():
 
-        logger.info('Starting evolution process for category: %s', category)
-        evolve_category(
-            dataset_config[category].getint('epochs', 1),
-            category,
-            dataset_config[category].getint('start', 0),
-            dataset_config[category].getint('end', 0),
-            data
-        )
-
+    evolve_dataset(dataset_config, data)
     
 
 @app.local_entrypoint()
