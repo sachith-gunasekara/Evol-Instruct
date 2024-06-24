@@ -12,7 +12,12 @@ done
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
 
-make LLAMA_CUBLAS=1
+if [ ! -f llama-cli ]; then
+    echo "llama.cpp not compiled. Compiling now."
+    make LLAMA_CUBLAS=1
+fi
+
+echo "llama.cpp compiled."
 
 cd ..
 
