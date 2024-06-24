@@ -100,6 +100,14 @@ def main(
     run_on_remote: bool = True
 ):
     if run_on_remote:
+        config['modal']['RunOnModal'] = "True"
+        with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
+            config.write(configfile)
+
         run_on_modal.remote()
     else:
+        config['modal']['RunOnModal'] = "False"
+        with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
+            config.write(configfile)
+            
         run_on_modal.local()

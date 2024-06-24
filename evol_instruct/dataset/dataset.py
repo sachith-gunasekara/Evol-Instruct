@@ -95,5 +95,9 @@ class Dataset:
         if not os.path.exists(os.path.dirname(os.path.join(os.getcwd(), filename))):
             os.makedirs(os.path.dirname(filename))
 
-        with open(here(os.path.join(config['data']['Location'], filename)), "w") as f:
+        generated_data_save_path = os.path.join(config['data']['ModalVolumePath'], filename) \
+            if config.getboolean('modal', 'RunOnModal') \
+            else os.path.join(config['data']['Location'], filename)
+        
+        with open(generated_data_save_path, "w") as f:
             json.dump(self._to_json(), f)
