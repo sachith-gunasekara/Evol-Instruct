@@ -38,7 +38,7 @@ def run_on_modal():
     os.environ['HF_HUB_CACHE'] = '/vol/.cache'
 
     from evol_instruct.init.logger import logger
-    from evol_instruct.data.prepare import prepare_seed_datasets
+    from evol_instruct.data.prepare_seed import prepare_seed_datasets
     from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script
     from evol_instruct.helpers.evolver import evolve_category

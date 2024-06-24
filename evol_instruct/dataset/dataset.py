@@ -2,6 +2,7 @@ import os
 import json
 from pyprojroot import here
 from dataclasses import dataclass
+import configparser
 from time import time
 
 from evol_instruct.init.logger import logger
@@ -87,72 +88,11 @@ class Dataset:
     def save(self, filename):
         logger.info("Saving dataset")
 
+        config = configparser.ConfigParser()
+        config.read(here('evol_instruct/config/config.ini'))
+
         if not os.path.exists(os.path.dirname(os.path.join(os.getcwd(), filename))):
             os.makedirs(os.path.dirname(filename))
 
-        with open(here(filename), "w") as f:
+        with open(here(os.path.join(config['data']['Location'], filename)), "w") as f:
             json.dump(self._to_json(), f)
-
-# Testing
-dataset = Dataset(filename_in_disk="test.json")
-
-dataset.add_data(
-    instruction="hello",
-    response="hi0",
-    category="test0",
-    evolution_strategy="test0",
-    in_depth_evolving_operation="test0",
-    epoch=0
-)
-dataset.add_data(
-    instruction="hello",
-    response="hi1",
-    category="test1",
-    evolution_strategy="test1",
-    in_depth_evolving_operation="test1",
-    epoch=1
-)
-dataset.add_data(
-    instruction="hello",
-    response="hi2",
-    category="test2",
-    evolution_strategy="test2",
-    in_depth_evolving_operation="test2",
-    epoch=2
-)
-
-dataset.add_data(
-    instruction="hello",
-    response="hi3",
-    category="test3",
-    evolution_strategy="test3",
-    in_depth_evolving_operation="test3",
-    epoch=3
-)
-
-dataset.add_data(
-    instruction="hello",
-    response="hi4",
-    category="test4",
-    evolution_strategy="test4",
-    in_depth_evolving_operation="test4",
-    epoch=4
-)
-
-dataset.add_data(
-    instruction="hello",
-    response="hi5",
-    category="test5",
-    evolution_strategy="test5",
-    in_depth_evolving_operation="test5",
-    epoch=5
-)
-
-dataset.add_data(
-    instruction="hello",
-    response="hi6",
-    category="test6",
-    evolution_strategy="test6",
-    in_depth_evolving_operation="test6",
-    epoch=6
-)
