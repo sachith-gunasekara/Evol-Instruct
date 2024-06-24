@@ -1,9 +1,10 @@
 import os
 import json
-from pyprojroot import here
 from dataclasses import dataclass
-import configparser
 from time import time
+import configparser
+
+from pyprojroot import here
 
 from evol_instruct.init.logger import logger
 
