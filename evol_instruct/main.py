@@ -1,5 +1,8 @@
+import configparser
+
 import modal
 from modal import Image
+from pyprojroot import here
 
 # Initialize modal app
 app = modal.App()
@@ -8,7 +11,11 @@ app = modal.App()
 volume = modal.Volume.from_name("evol-instruct", create_if_missing=True)
 MODEL_DIR = "/vol"
 
-GPU = 'T4'
+# Setup GPU
+config = configparser.ConfigParser()
+config.read(here('evol_instruct/config/config.ini'))
+
+GPU = config['modal']['GPU']
 
 image = (
     Image.from_registry("thr3a/cuda12.1-torch")
