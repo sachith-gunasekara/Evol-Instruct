@@ -67,19 +67,20 @@ def run_on_modal():
     data = prepare_datasets()
 
     logger.info('Waiting for dispatched scripts to finish compiling')
-    pgm_process.wait()
-    pem_process.wait()
-    logger.info('Dispatched scripts finished compiling')
+    pgm_process.communicate()
+    logger.info('Generator model script finished compiling')
+    pem_process.communicate()
+    logger.info('Evaluator model script finished compiling')
 
     logger.info('Starting evolution process')
     for category in dataset_config.sections():
 
         logger.info('Starting evolution process for category: %s', category)
         evolve_category(
-            dataset_config[category]['epochs'],
+            dataset_config[category].getint('epochs', 1),
             category,
-            dataset_config[category]['start'],
-            dataset_config[category]['end'],
+            dataset_config[category].getint('start', 0),
+            dataset_config[category].getint('end', 0),
             data
         )
 
