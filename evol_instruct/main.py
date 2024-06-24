@@ -13,6 +13,7 @@ MODEL_DIR = "/vol"
 
 # Setup GPU
 config = configparser.ConfigParser()
+config.optionxform = str
 config.read(here('evol_instruct/config/config.ini'))
 
 GPU = config['modal']['GPU']
@@ -109,5 +110,5 @@ def main(
         config['modal']['RunOnModal'] = "False"
         with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
             config.write(configfile)
-            
+
         run_on_modal.local()

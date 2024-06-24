@@ -17,6 +17,7 @@ if [ ! -f llama-cli ]; then
     make LLAMA_CUBLAS=1
 fi
 
+chmod +x llama-cli
 echo "llama.cpp compiled."
 
 cd ..

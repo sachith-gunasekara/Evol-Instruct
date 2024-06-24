@@ -10,7 +10,7 @@ done
 git clone https://github.com/cmp-nct/ggllm.cpp
 cd ggllm.cpp
 
-if [ ! -f llama-cli ]; then
+if [ ! -f falcon_main ]; then
     echo "ggllm.cpp not compiled. Compiling now."
 
     export PATH="/usr/local/cuda/bin:$PATH"
@@ -19,6 +19,7 @@ if [ ! -f llama-cli ]; then
     make falcon_main falcon_quantize falcon_perplexity
 fi
 
+chmod +x falcon_main
 echo "ggllm.cpp compiled."
 
 cd ..
