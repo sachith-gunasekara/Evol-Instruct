@@ -80,7 +80,8 @@ class Dataset:
         return {key: [getattr(data_instance, key) for data_instance in self] for key in keys}
     
     def check_and_save(self):
-        if len(self.data) % self.save_count_interval >= 0 or time() - self.last_save_time >= self.save_time_interval:
+        if len(self) % self.save_count_interval >= 0:
+            logger.debug("Dataset size: %s, Save count interval: %s", len(self), self.save_count_interval)
             self.save(self.filename)
             self.last_save_time = time()
 

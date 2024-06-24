@@ -12,7 +12,7 @@ logger.info('Downloading punkt and stopwords from nltk')
 nltk.download('punkt')
 nltk.download('stopwords')
 
-def prepare_datasets():
+def prepare_seed_datasets():
     config = configparser.ConfigParser()
     config.read(here('evol_instruct/config/config.ini'))
 

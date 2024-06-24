@@ -38,16 +38,18 @@ def run_on_modal():
     os.environ['HF_HUB_CACHE'] = '/vol/.cache'
 
     from evol_instruct.init.logger import logger
-    from evol_instruct.data.prepare import prepare_datasets
+    from evol_instruct.data.prepare import prepare_seed_datasets
     from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script
     from evol_instruct.helpers.evolver import evolve_category
 
 
+    config = configparser.ConfigParser()
+    config.read(here('evol_instruct/config/config.ini'))
 
     # Load the dataset config file
     dataset_config = configparser.ConfigParser()
-    dataset_config.read(here('evol_instruct/config/dataset.ini'))
+    dataset_config.read(here(config['data']['ConfigurationFile']))
 
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
@@ -64,7 +66,7 @@ def run_on_modal():
     pem_process = run_bash_script(prepare_evaluator_model_script, args=['-i', evaluator_model_ggml_path, '-o', evaluator_model_gguf_path], cwd=here('evol_instruct/workers'))
 
 
-    data = prepare_datasets()
+    data = prepare_seed_datasets()
 
     logger.info('Waiting for dispatched scripts to finish compiling')
     pgm_process.communicate()
