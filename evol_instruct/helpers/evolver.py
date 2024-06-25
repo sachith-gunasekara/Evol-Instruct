@@ -1,3 +1,4 @@
+import os
 import configparser
 from pyprojroot import here
 from time import time
@@ -9,7 +10,10 @@ config = configparser.ConfigParser()
 config.read(here('evol_instruct/config/config.ini'))
 
 def dump_enevolved_instructions(epoch, category, instruction, evolved_instruction, response):
-    with open(here(os.path.join(config['data']['Location'], "unevolved_instructions.txt")), "a") as f:
+    with open(os.path.join(
+        config['data']['ModalVolumePath'] if config.getboolean('modal', 'RunOnModal') else config['data']['Location'],
+        'unevolved_instructions.txt'
+    ), 'a') as f:
         f.write("------------------------------------------------------------------------------\n")
         f.write(f"{epoch}, {category}\n")
         f.write("Instruction Not Evolved\n")

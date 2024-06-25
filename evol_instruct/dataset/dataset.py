@@ -101,9 +101,10 @@ class Dataset:
         config = configparser.ConfigParser()
         config.read(here('evol_instruct/config/config.ini'))
 
-        filepath = os.path.join(config['data']['ModalVolumePath'], self.filename) \
-            if config.getboolean('modal', 'RunOnModal') \
-            else os.path.join(config['data']['Location'], self.filename)
+        filepath = os.path.join(
+            config['data']['ModalVolumePath'] if config.getboolean('modal', 'RunOnModal') else config['data']['Location'],
+            self.filename
+        )
     
         if not os.path.exists(os.path.dirname(filepath)):
             os.makedirs(os.path.dirname(filepath))
