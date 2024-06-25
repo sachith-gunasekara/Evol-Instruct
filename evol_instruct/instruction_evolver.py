@@ -153,10 +153,10 @@ class InstructionEvolver:
             return any(phrase in instruction for phrase in disallowed_phrases)
 
         if \
-        has_information_gain(original_instruction, evolved_instruction) and \
         not is_response_difficult(response) and \
         not response_contains_only_punctuation_and_stop_words(response) and \
-        not instruction_contains_disallowed_phrases(evolved_instruction):
+        not instruction_contains_disallowed_phrases(evolved_instruction) and\
+        has_information_gain(original_instruction, evolved_instruction):
             return True
         else:
             return False
