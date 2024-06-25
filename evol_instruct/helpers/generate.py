@@ -40,7 +40,7 @@ def generate_from_generator_model(prompt, temp=0.8, timeout=600):
 def generate_from_evaluator_model(prompt):
     prompt = adjust_escape_characters(prompt)
     prompt = f"<s>[INST]{prompt}[/INST]"
-    cmd = f"{here('evol_instruct/workers/llama.cpp/llama-cli')} -c 2048 -t 8 -ngl 20 -m {evaluator_model_gguf_path} -p \"{prompt}\""
+    cmd = f"{here('evol_instruct/workers/llama.cpp/llama-cli')} -c 2048 -n 50 -t 8 -ngl 41 -m {evaluator_model_gguf_path} -p \"{prompt}\""
 
     result = run_cmd_and_get_output(cmd, {})
 

@@ -62,7 +62,7 @@ def run_on_modal():
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
 
-    prepare_generator_model_script = here(os.path.join('evol_instruct', 'scripts', 'prepare_generator_model.sh'))
+    prepare_generator_model_script = here(os.path.join('evol_instruct/scripts/prepare_generator_model.sh'))
     subprocess.run(['chmod', '+x', prepare_generator_model_script], check=True)
     pgm_process = run_bash_script_in_background(prepare_generator_model_script, args=['-O', os.path.dirname(generator_model_path)], cwd=here('evol_instruct/workers'))
 
@@ -81,6 +81,8 @@ def run_on_modal():
     logger.info('Generator model script finished compiling')
     pem_process.communicate()
     logger.info('Evaluator model script finished compiling')
+    pgm_process.kill()
+    pem_process.kill()
 
     logger.info('Starting evolution process')
 

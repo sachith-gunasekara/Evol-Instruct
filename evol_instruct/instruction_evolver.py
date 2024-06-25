@@ -83,7 +83,7 @@ class InstructionEvolver:
 
                 self.config["prompt"] = self.config["prompt"].format(instruction=instruction)
 
-        print(f"Prompt: {self.config['prompt']}")
+        logger.debug('Prompt: %s', self.config["prompt"])
         return self
 
     def generate_example(self):
@@ -169,20 +169,24 @@ class InstructionEvolver:
             file_name_append_tag=''
         ):
         for epoch in tqdm(range(epochs), desc="Evolving", unit="epoch"):
-            self.evolved_dataset = Dataset(
-                filename_in_disk=Dataset.generate_filename(
-                    epoch, 
-                    category, 
-                    file_name_manual_epoch, 
-                    file_name_append_tag
-                )
-            )
-
             new_pool = []
 
             self.select_evolution_strategy()
             if self.config["strategy"][0] == 0:
                 self.select_in_depth_evolution_operation()
+            else:
+                self.config['in_depth_evolution_operation'] = None
+
+            self.evolved_dataset = Dataset(
+                filename_in_disk=Dataset.generate_filename(
+                    epoch, 
+                    category, 
+                    file_name_manual_epoch, 
+                    file_name_append_tag,
+                    self.config['strategy'][1],
+                    self.config['in_depth_evolution_operation'][1] if self.config['in_depth_evolution_operation'] else ''
+                )
+            )
 
             for instruction in tqdm(self.pool, desc="Instruction", unit="instruction"):
                 try:
@@ -192,7 +196,7 @@ class InstructionEvolver:
                         logger.debug('Evolved instruction: %s, Response: %s', evolved_instruction, response)
 
                         self.evolved_dataset.add_data(
-                            instruction,
+                            evolved_instruction,
                             response,
                             category,
                             self.config['strategy'][1],

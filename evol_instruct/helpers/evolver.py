@@ -44,11 +44,9 @@ def evolve_category(
 
     category_evolver = InstructionEvolver(evolve_data)
 
-    print(len(category_evolver.pool), category_evolver.pool[:2])
+    logger.debug('Total instructions: %i, Sample instructions: %i', len(category_evolver.pool), category_evolver.pool[:2])
 
-    time0 = time()
     category_evolver.evolve(
-        time0,
         epochs,
         category,
         file_name_manual_epoch,

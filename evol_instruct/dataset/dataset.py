@@ -120,7 +120,7 @@ class Dataset:
         file_name_manual_epoch, 
         file_name_append_tag, 
         strategy, 
-        in_depth_evolution_operation=None
+        in_depth_evolution_operation=''
     ) -> str:
         
         config = configparser.ConfigParser()
@@ -128,5 +128,5 @@ class Dataset:
         return os.path.join(
             "evolved",
             category,
-            f"{epoch if not file_name_manual_epoch else file_name_manual_epoch}_{strategy}{f'_{in_depth_evolution_operation}' if in_depth_evolution_operation else ''}{f'_{file_name_append_tag}' if file_name_append_tag else ''}.json"
+            f"{epoch if not file_name_manual_epoch else file_name_manual_epoch}_{strategy}_{in_depth_evolution_operation}{f'_{file_name_append_tag}' if file_name_append_tag else ''}.json"
         )
