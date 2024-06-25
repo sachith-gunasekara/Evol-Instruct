@@ -94,7 +94,7 @@ class Dataset:
     
     def check_and_save(self):
         if len(self) % self.save_count_interval == 0 or time() - self.last_save_time >= self.save_time_interval:
-            self.save(self.filename)
+            self.save()
             self.last_save_time = time()
 
     def save(self):
