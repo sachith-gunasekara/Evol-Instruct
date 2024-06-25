@@ -3,7 +3,7 @@ import platform
 
 from evol_instruct.init.logger import logger
 
-def run_bash_script(bash_script: str, args: list = None, cwd: str = None) -> subprocess.Popen:
+def run_bash_script_in_background(bash_script: str, args: list = None, cwd: str = None) -> subprocess.Popen:
     """
     Runs a bash script with the given arguments.
 

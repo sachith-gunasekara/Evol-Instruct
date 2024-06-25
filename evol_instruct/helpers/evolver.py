@@ -1,3 +1,4 @@
+import os
 import configparser
 from pyprojroot import here
 from time import time
@@ -9,7 +10,10 @@ config = configparser.ConfigParser()
 config.read(here('evol_instruct/config/config.ini'))
 
 def dump_enevolved_instructions(epoch, category, instruction, evolved_instruction, response):
-    with open(here(os.path.join(config['data']['Location'], "unevolved_instructions.txt")), "a") as f:
+    with open(os.path.join(
+        config['data']['ModalVolumePath'] if config.getboolean('modal', 'RunOnModal') else config['data']['Location'],
+        'unevolved_instructions.txt'
+    ), 'a') as f:
         f.write("------------------------------------------------------------------------------\n")
         f.write(f"{epoch}, {category}\n")
         f.write("Instruction Not Evolved\n")
@@ -44,13 +48,24 @@ def evolve_category(
 
     category_evolver = InstructionEvolver(evolve_data)
 
-    print(len(category_evolver.pool), category_evolver.pool[:2])
+    logger.debug('Total instructions: %i, Sample instructions: %s', len(category_evolver.pool), category_evolver.pool[:2])
 
-    time0 = time()
     category_evolver.evolve(
-        time0,
         epochs,
         category,
         file_name_manual_epoch,
         file_name_append_tag
     )
+
+def evolve_dataset(dataset_config: configparser.ConfigParser, data: list[dict]):
+    for category in dataset_config.sections():
+
+        logger.info('Starting evolution process for category: %s', category)
+        
+        evolve_category(
+            dataset_config[category].getint('epochs', 1),
+            category,
+            dataset_config[category].getint('start', 0),
+            dataset_config[category].getint('end', 0),
+            data
+        )
