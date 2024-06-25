@@ -8,6 +8,9 @@ from evol_instruct.init.logger import logger
 config = configparser.ConfigParser()
 config.read(here('evol_instruct/config/config.ini'))
 
+if config.getboolean('modal', 'RunOnModal'):
+    os.environ['HF_HUB_CACHE'] = '/vol/.cache'
+
 # Model used for generating the dataset
 generator_model_path = hf_hub_download(
     config['model']['GeneratorModel'],
