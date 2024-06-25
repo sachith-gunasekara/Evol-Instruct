@@ -81,7 +81,7 @@ class InstructionEvolver:
             case 1:
                 self.config["prompt"] = get_in_breadth_evolving_base_prompt()
 
-                self.config["prompt"] = self.config["prompt"].format(instruction=instruction)
+        self.config["prompt"] = self.config["prompt"].format(instruction=instruction)
 
         logger.debug('Prompt: %s', self.config["prompt"])
         return self
