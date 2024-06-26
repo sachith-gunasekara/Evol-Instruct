@@ -37,7 +37,8 @@ def run_cmd_and_get_output(cmd: str, result: dict):
     This function executes the given command using the subprocess module and captures the output. If the command executes successfully, the output is stored in the 'output' key of the 'result' dictionary. If the command execution fails, the error message is stored in the 'error' key of the 'result' dictionary.
     """
     try:
-        output = subprocess.check_output(cmd)
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, _ = process.communicate()
         result['output'] = output
     except subprocess.CalledProcessError as e:
         result['error'] = str(e)
