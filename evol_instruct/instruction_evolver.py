@@ -150,7 +150,7 @@ class InstructionEvolver:
                 "#Given Prompt#", "#Created Prompt#", "#Rewritten Prompt#",
                 "given prompt", "created prompt", "rewritten prompt"]
 
-            return any(phrase in instruction for phrase in disallowed_phrases)
+            return any(phrase.lower() in instruction.lower() for phrase in disallowed_phrases)
 
         if \
         not is_response_difficult(response) and \
