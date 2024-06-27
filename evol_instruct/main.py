@@ -51,7 +51,7 @@ def run_on_modal(
     config.read(here('evol_instruct/config/config.ini'))
     
     if run_on_remote:
-        logger.info('Running on Modal. Setting HF_HUB_CACHE to /vol/.cache. This will download the models to the Modal Volume and speedup subsequent runs in this Modal workspace.')
+        logger.info('Running on Modal. Setting HF_HUB_CACHE to /vol/.cache. This will download the models to the Modal Volume, allowing subsequent runs to load models from the cache.')
         os.environ['HF_HUB_CACHE'] = '/vol/.cache'
 
         # Need to update the config file if this script is run on remote
