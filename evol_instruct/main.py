@@ -37,7 +37,9 @@ image = (
     },
     _allow_background_volume_commits=True
 )
-def run_on_modal():
+def run_on_modal(
+    run_on_remote: bool = True
+):
     from pyprojroot import here
     import subprocess
     import os
@@ -52,6 +54,11 @@ def run_on_modal():
 
     config = configparser.ConfigParser()
     config.read(here('evol_instruct/config/config.ini'))
+
+    if run_on_remote:
+        config['modal']['RunOnModal'] = "True"
+        with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
+            config.write(configfile)
 
     # Load the dataset config file
     dataset_config = configparser.ConfigParser()
@@ -92,10 +99,6 @@ def main(
     run_on_remote: bool = True
 ):
     if run_on_remote:
-        config['modal']['RunOnModal'] = "True"
-        with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
-            config.write(configfile)
-
         run_on_modal.remote()
     else:
         config['modal']['RunOnModal'] = "False"
