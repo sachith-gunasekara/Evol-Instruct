@@ -6,10 +6,9 @@ from huggingface_hub import hf_hub_download
 from evol_instruct.init.logger import logger
 
 config = configparser.ConfigParser()
-config.read(here('evol_instruct/config/config.ini'))
+config.read(here('evol_instruct/config/config.ini'))    
 
-if config.getboolean('modal', 'RunOnModal'):
-    os.environ['HF_HUB_CACHE'] = '/vol/.cache'
+logger.info('Downloading generator model file %s from %s', config['model']['GeneratorModelGGMLFileName'], config['model']['GeneratorModel'])
 
 # Model used for generating the dataset
 generator_model_path = hf_hub_download(

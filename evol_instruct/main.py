@@ -46,19 +46,23 @@ def run_on_modal(
     import configparser
 
     from evol_instruct.init.logger import logger
+
+    config = configparser.ConfigParser()
+    config.read(here('evol_instruct/config/config.ini'))
+    
+    if run_on_remote:
+        logger.info('Running on Modal. Setting HF_HUB_CACHE to /vol/.cache. This will download the models to the Modal Volume and speedup subsequent runs in this Modal workspace.')
+        os.environ['HF_HUB_CACHE'] = '/vol/.cache'
+
+        # Need to update the config file if this script is run on remote
+        config['modal']['RunOnModal'] = "True"
+        with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
+            config.write(configfile)
+
     from evol_instruct.data.prepare_seed import prepare_seed_datasets
     from evol_instruct.init.model import generator_model_path, evaluator_model_ggml_path, evaluator_model_gguf_path
     from evol_instruct.helpers.bash import run_bash_script_in_background
     from evol_instruct.helpers.evolver import evolve_dataset
-
-
-    config = configparser.ConfigParser()
-    config.read(here('evol_instruct/config/config.ini'))
-
-    if run_on_remote:
-        config['modal']['RunOnModal'] = "True"
-        with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
-            config.write(configfile)
 
     # Load the dataset config file
     dataset_config = configparser.ConfigParser()
@@ -67,7 +71,7 @@ def run_on_modal(
     # Prepare the generator model
     logger.info('Dispatching prepare_generator_model.sh to run in the background')
 
-    prepare_generator_model_script = here(os.path.join('evol_instruct/scripts/prepare_generator_model.sh'))
+    prepare_generator_model_script = here('evol_instruct/scripts/prepare_generator_model.sh')
     subprocess.run(['chmod', '+x', prepare_generator_model_script], check=True)
     pgm_process = run_bash_script_in_background(prepare_generator_model_script, args=['-O', os.path.dirname(generator_model_path)], cwd=here('evol_instruct/workers'))
 
@@ -99,10 +103,10 @@ def main(
     run_on_remote: bool = True
 ):
     if run_on_remote:
-        run_on_modal.remote()
+        run_on_modal.remote(run_on_remote)
     else:
         config['modal']['RunOnModal'] = "False"
         with open(here('evol_instruct/config/config.ini'), 'w') as configfile:
             config.write(configfile)
 
-        run_on_modal.local()
+        run_on_modal.local(run_on_remote)

@@ -11,10 +11,11 @@ done
 
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
+git checkout 9b2f16f # Commit version to support this project compilation
 
 if [ ! -f llama-cli ]; then
     echo "llama.cpp not compiled. Compiling now."
-    make LLAMA_CUBLAS=1
+    make LLAMA_CUBLAS=1 -j 4
 fi
 
 chmod +x llama-cli
