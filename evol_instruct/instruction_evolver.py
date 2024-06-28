@@ -127,7 +127,7 @@ class InstructionEvolver:
             logger.debug('Model output: %s', model_output)
 
             if "not equal" in model_output:
-                logger.info("Evolved instruction has information gain. Deduced in %i attempts", counter+2)
+                logger.info("Evolved instruction has information gain. Deduced in %i attempts", counter+1)
                 return True
             elif "equal" in nltk.word_tokenize(model_output):
                 logger.info("Evolved instruction has no information gain")
